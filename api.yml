@@ -1,0 +1,188 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: e-Banking API
+paths:
+  /api/transactions:
+    get:
+      summary: Returns a paginated list of money account transactions created in an arbitrary calendar month for a given customer who is logged-on in the portal.
+      parameters:
+        - name: month
+          in: query
+          description: Month for which transactions are being requested (in the format YYYY-MM)
+          required: true
+          schema:
+            type: string
+            example: "2023-04"
+        - name: page
+          in: query
+          description: Page number of the results to retrieve
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            example: 1
+        - name: page_size
+          in: query
+          description: Number of transactions to include in each page
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            example: 20
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TransactionList'
+        '401':
+          description: Unauthorized
+        '404':
+          description: Not Found
+      security:
+        - JWT: []
+  /api/accounts:
+    get:
+      summary: Returns a list of money accounts belonging to the authenticated customer.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountList'
+        '401':
+          description: Unauthorized
+        '404':
+          description: Not Found
+      security:
+        - JWT: []
+  /api/cart:
+    post:
+      summary: Adds a product to the customer's cart.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                product_id:
+                  type: integer
+                  example: 123
+                quantity:
+                  type: integer
+                  example: 2
+      responses:
+        '201':
+          description: Created
+          headers:
+            Location:
+              description: URL of the newly created resource
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Product added to cart"
+                  cart_id:
+                    type: integer
+                    example: 456
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '404':
+          description: Not Found
+      security:
+        - JWT: []
+  /api/transactions/retrieve:
+    post:
+      summary: Retrieves the customer's transactions for a specified month.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                month:
+                  type: string
+                  example: "2023-04"
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TransactionList'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '404':
+          description: Not Found
+        '500':
+          description: Internal Server Error
+      security:
+        - JWT: []
+  /api/transactions/convert:
+    post:
+      summary: Converts the customer's transactions to a specified currency.
+      requestBody:
+        required: true
+        content:
+  application/json:
+schema:
+  type: object
+  properties:
+  transactions:
+  type: array
+  items:
+  type: object
+  properties:
+  id:
+  type: integer
+  amount:
+  type: number
+  currency:
+  type: string
+  target_currency:
+  type: string
+  enum: ["USD", "EUR", "GBP", "AUD", "CAD"]
+responses:
+'200':
+description: OK
+content:
+application/json:
+schema:
+type: object
+properties:
+converted_transactions:
+type: array
+items:
+type: object
+properties:
+id:
+type: integer
+amount:
+type: number
+currency:
+type: string
+conversion_rate:
+type: number
+'400':
+description: Bad Request
+'401':
+description: Unauthorized
+'500':
+description: Internal Server Error
+security:
+- JWT: []

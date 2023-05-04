@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: e-banking-api
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: e-banking-api
+  template:
+    metadata:
+      labels:
+        app: e-banking-api
+    spec:
+      containers:
+      - name: e-banking-api
+        image: <Docker image URL>
+        env:
+        - name: KAFKA_BOOTSTRAP_SERVERS
+          value: <Kafka broker URL>
+        - name: KAFKA_CONSUMER_GROUP_ID
+          value: <Consumer group ID>
+        - name: EXCHANGE_RATE_API_URL
+          value: <External API URL>
+        - name: EXCHANGE_RATE_API_KEY
+          value: <External API Key>
