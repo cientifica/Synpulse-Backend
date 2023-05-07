@@ -2,7 +2,7 @@
 The e-Banking Portal is a REST API that provides a paginated list of money account transactions for a given customer in an arbitrary calendar month. It retrieves transactions from a Kafka topic, calculates the total credit and debit values at the current exchange rate, and returns the results to the client.
 
 ##Table of Contents
-．Project Description
+．Project Description\n
 ．Features
 ．Installation
 ．Usage
